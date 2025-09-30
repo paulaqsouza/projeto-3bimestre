@@ -9,14 +9,51 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
+// Modelo User
 model User {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relacionamento 1-1 com Store
+  store     Store?   @relation("UserStore")
+}
+
+// Modelo Store  
+model Store {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  address     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacionamento 1-1 com User (um usuário pode ter uma loja)
+  userId      Int      @unique
+  user        User     @relation("UserStore", fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Relacionamento 1-N com Product (uma loja pode ter vários produtos)
+  products    Product[]
+}
+
+// Modelo Product
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+  stock       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacionamento N-1 com Store (vários produtos pertencem a uma loja)
+  storeId     Int
+  store       Store    @relation(fields: [storeId], references: [id], onDelete: Cascade)
 }

@@ -7,6 +7,9 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "postinstall": "prisma generate",
+    "migrate": "prisma migrate dev --name init",
+    "deploy:migrations": "prisma migrate deploy",
+    "studio": "prisma studio",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
